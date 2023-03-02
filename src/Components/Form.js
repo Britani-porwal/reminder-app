@@ -5,62 +5,50 @@ import Table from './Table';
 const Form = () => {
     const initialState = {
         reminder: "",
-        date: ""
+        date: "",
+        elapsed: true,
+        days: 0,
+        hours: 0,
+        min: 0
     }
     const [reminderData, setReminderData] = useState({ ...initialState })
     const [tableData, setTableData] = useState([])
-    const initialTime = {
-        days: 0,
-        hours: 0,
-        minutes: 0
-    }
-    const [time, setTime] = useState({ ...initialTime })
-    const [flag,setFlag] = useState(0)
+
     const handleChange = (e) => {
         setReminderData({ ...reminderData, reminder: e.target.value })
     };
 
-    const handleDifference = (date) => {
+    const handleDifference = () => {
         let currentDate = new Date();
-        if(currentDate > date) {
-            // flag = 1 elapsed
-            // flag = 0 upcoming
-            setFlag(1);
-        }
-        else{
-            setFlag(0);
-        }
-        console.log("flag",flag);
+        const date = reminderData.date;
+        let elapsedVal ;
+        if(currentDate > date) elapsedVal = reminderData.elapsed;
+        else elapsedVal = !reminderData.elapsed;
+
         let difference = Math.abs(currentDate - date) / 1000 //JS timestamps are measured in milliseconds
         let days = Math.floor(difference / 86400); // 24*60*60 seconds in a day
         difference -= days * 86400;
         let hours = Math.floor(difference / 3600) % 24;
         difference -= hours * 3600;
-        let minutes = Math.floor(difference / 60) % 60;
-
-        console.log("days" , days);
-        // console.log("hours" , hours);
-        // console.log("minutes" , minutes);
-        setTime({
-            days: days,
-            hours: hours,
-            minutes: minutes
-        })
+        let min = Math.floor(difference / 60) % 60;
+        return ({ elapsed: elapsedVal ,days: days, hours: hours, min: min });
     }
-
 
     function addReminder(e) {
         e.preventDefault();
         const checkEmptyInput = !Object.values(reminderData).every(result => result === "");
         if (checkEmptyInput) {
-            const newData = (data) => ([...data, reminderData]);
-            setTableData(newData);
-            handleDifference(reminderData.date);
-            setReminderData({ ...initialState });
-            //     console.log("tableData",{...tableData});
-            //     console.log("reminderData",{...reminderData});
+            let details = handleDifference();
+            let newReminderObj = {...reminderData , ...details} //merging objects 
+            setReminderData({...newReminderObj})
+            setTableData((prevData) => [...prevData,{...newReminderObj}]);
         }
+        setReminderData({ ...initialState });
     }
+    const lapsed = tableData.map((reminderInfo) => {
+        return(reminderInfo.elapsed)
+    })
+
     return (<form>
         <div>
             <input
@@ -81,7 +69,7 @@ const Form = () => {
             <button>CLEAR ALL</button>
         </div>
         <div>
-            <Table tableData={tableData} time={time} flag={flag}/>
+            <Table tableData={tableData} lapsed={lapsed}/>
         </div>
     </form>)
 }

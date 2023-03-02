@@ -1,11 +1,4 @@
-const Table = ({ tableData, time, flag }) => {
-    const tableRow = tableData.map((reminderInfo) => {
-        return (<tr>
-            <td>{reminderInfo.reminder}</td>
-            <td>{(time.days > 0) ? time.days + "days": ((time.hours > 0) ? time.hours + "hrs" : time.minutes + "min")}{" "}{flag ? "ago" : ""}</td>
-            <td>{reminderInfo.date.toDateString() + ", " + reminderInfo.date.toLocaleTimeString()}</td>
-        </tr>)
-    })
+const Table = ({ tableData, lapsed }) => {
     return (<div className="tables">
         <span><p>Past Reminders</p>
             <table>
@@ -16,9 +9,20 @@ const Table = ({ tableData, time, flag }) => {
                         <th>Due Date nd Time</th>
                     </tr>
                 </thead>
-                <tbody>
-                    {flag === 1 ? tableRow : ""}
-                </tbody>
+                {tableData.map((reminderInfo) => {
+                    if (reminderInfo.elapsed === true) {
+                        return <tbody>
+                            <tr key={new Date()}>
+                                <td>{reminderInfo.reminder}</td>
+                                <td>{(reminderInfo.days > 0) ? reminderInfo.days + "days" : ((reminderInfo.hours > 0) ? reminderInfo.hours + "hrs" : reminderInfo.minutes + "min")}{" "}{reminderInfo.elapsed ? "ago" : ""}</td>
+                                <td>{reminderInfo.date.toDateString() + ", " + reminderInfo.date.toLocaleTimeString()}</td>
+                            </tr>
+                        </tbody>
+                    }
+                    else {
+                        return <></>;
+                    }
+                })}
             </table>
         </span>
         <span><p>Future Reminders</p>
@@ -30,9 +34,20 @@ const Table = ({ tableData, time, flag }) => {
                         <th>Due Date nd Time</th>
                     </tr>
                 </thead>
-                <tbody>
-                    {flag === 0 ? tableRow : ""}
-                </tbody>
+                {tableData.map((reminderInfo) => {
+                    if (reminderInfo.elapsed === false) {
+                        return <tbody>
+                            <tr key={new Date()}>
+                                <td>{reminderInfo.reminder}</td>
+                                <td>{(reminderInfo.days > 0) ? reminderInfo.days + "days" : ((reminderInfo.hours > 0) ? reminderInfo.hours + "hrs" : reminderInfo.minutes + "min")}{" "}{reminderInfo.elapsed ? "ago" : ""}</td>
+                                <td>{reminderInfo.date.toDateString() + ", " + reminderInfo.date.toLocaleTimeString()}</td>
+                            </tr>
+                        </tbody>
+                    }
+                    else {
+                        return <></>;
+                    }
+                })}
             </table>
         </span>
     </div>)
