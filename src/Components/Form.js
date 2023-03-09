@@ -45,10 +45,12 @@ const Form = () => {
         }
         setReminderData({ ...initialState });
     }
-    const lapsed = tableData.map((reminderInfo) => {
-        return(reminderInfo.elapsed)
-    })
-
+    
+    function clearAll(e){
+        e.preventDefault();
+        setTableData([]);
+        setReminderData({...initialState})
+    }
     return (<form>
         <div>
             <input
@@ -66,10 +68,10 @@ const Form = () => {
             <button onClick={addReminder} >ADD Reminder</button>
         </div>
         <div className='clear'>
-            <button>CLEAR ALL</button>
+            <button onClick={clearAll}>CLEAR ALL</button>
         </div>
         <div>
-            <Table tableData={tableData} lapsed={lapsed}/>
+            <Table tableData={tableData}/>
         </div>
     </form>)
 }

@@ -1,4 +1,4 @@
-const Table = ({ tableData, lapsed }) => {
+const Table = ({ tableData }) => {
     return (<div className="tables">
         <span><p>Past Reminders</p>
             <table>
